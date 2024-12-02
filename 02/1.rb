@@ -20,7 +20,7 @@ def valid_array?(array)
   (0...array.size - 1).each do |i|
     diff = array[i + 1] - array[i]
 
-    return false if diff.abs < 1 || diff.abs > 3
+    return false unless (1..3).cover?(diff.abs)
     return false if direction && ((direction == :increasing && diff < 0) || (direction == :decreasing && diff > 0))
     direction ||= diff > 0 ? :increasing : :decreasing
   end
