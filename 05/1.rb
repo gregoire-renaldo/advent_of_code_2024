@@ -14,11 +14,6 @@ end
 arrays = File.readlines('input_2.txt').map do |line|
   line.strip.split(',').map(&:to_i)
 end
-puts arrays[1]
-
-good_lines = []
-values = []
-
 
 def valid_arrays(arrays, rules)
   arrays.select do |array|
