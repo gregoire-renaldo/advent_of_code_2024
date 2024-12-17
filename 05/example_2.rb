@@ -15,27 +15,25 @@ arrays = File.readlines('input_2.txt').map do |line|
   line.strip.split(',').map(&:to_i)
 end
 
-bad_lines = []
-values = []
-
-
-def unvalid_arrays(arrays, rules)
-  bad_lines = []
+def valid_arrays(arrays, rules)
   arrays.select do |array|
     valid = true
     (0...array.length - 1).each do |i|
       current = array[i]
       next_number = array[i + 1]
       if rules[current].nil? || !rules[current].include?(next_number)
-       
-        bad_lines << array
+        valid = false
         break
       end
     end
+  
+    valid
   end
 end
 
-unvalid_arrays = unvalid_arrays(arrays, rules)
+unvalid_arrays = arrays - valid_arrays(arrays, rules)
+
+reordered_arrays = unvalid_arrays.map { |array| reorder_array(array, rules) }
 puts unvalid_arrays.count
 puts unvalid_arrays[0]
 
@@ -56,17 +54,29 @@ rules = {
 
 example_array = [75,97,47,61,53]
 
+# Function to reorder an array based on the rules
 def reorder_array(arr, rules)
-  order = {}
-  
-  rules.each_with_index do |(key, value), index|
-    order[key] = index
-    value.each_with_index do |val, sub_index|
-      order[val] = index + sub_index + 1
+  # Keep track of the positions for each number
+  modified = true
+
+  while modified
+    modified = false
+    arr.each_with_index do |num, index|
+      rule = rules[num] || []
+      rule.each do |after_num|
+        after_index = arr.index(after_num)
+        if after_index && after_index < index
+          arr[index], arr[after_index] = arr[after_index], arr[index]
+          modified = true  
+          break 
+        end
+      end
     end
   end
-  arr.sort_by { |n| order[n] || Float::INFINITY }
+
+  arr
 end
+
 
 bad_array = [75, 97, 47, 61, 53]
 
